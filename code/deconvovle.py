@@ -11,8 +11,7 @@ to Next-Generation Dexcom Technology
 Bayesian Multi-day Framework
 4 On-line calibration of glucose sensors from the measured current by a time-varying calibration
 function and Bayesian priors
-5 On-line calibration of glucose sensors from the measured current by a time-varying calibration
-function and Bayesian priors
+5 
 """
 
 

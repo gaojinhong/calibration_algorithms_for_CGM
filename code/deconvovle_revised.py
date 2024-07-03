@@ -12,17 +12,31 @@ from scipy.linalg import fractional_matrix_power
 import matplotlib.pyplot as plt
 from deconvution_method import get_G_matrix, gen_F_matrix
 
-data = pd.read_csv("../data/homo_dataset.csv")
-bld_1_0 = data["225_0_blood"]
-ist_1_0 = data["225_0_ist"]
+#data = pd.read_csv("../data/homo_dataset.csv")
+#bld = data["225_0_blood"]
+#ist = data["225_0_ist"]
 
-row_len = bld_1_0.size
+
+data = pd.read_csv("../data/measuredvalue_drop_datetime.csv", index_col=("segmentid"))
+data_grouped = data.groupby("segmentid")
+
+selected_data = data_grouped.get_group(240)
+
+bld = selected_data["blood"]
+ist = selected_data["ist"]
+
+row_len = bld.size
+
+if row_len > 300:
+    bld = selected_data["blood"][0:300]
+    ist = selected_data["ist"][0:300]
+    row_len = 300
 
 #set the convolve function and related parameters
-Tau = 14
+Tau = 16
 Cvle_time = 175
 Integrate_step = 5
-Gama = 0.3
+Gama = 0.4
 
 G_matrix = get_G_matrix(Tau, row_len)
 #Assume Sigma_v_matrix = I
@@ -33,18 +47,18 @@ F_matrix = gen_F_matrix(3, row_len)
 Sigma_u_matrix_inverse = np.dot(F_matrix.T, F_matrix)
 
 #delta_gama_matrix = [(G.T * (Sigma_v_matrix)**-1 * G + Gama * (Sigma_u_matrix)**-1) **-1 ] * G.T * (Sigma_v_matrix)**-1 
-delta_gama_matrix  = inv(((G_matrix.T).dot(np.dot(inv(Sigma_v_matrix), G_matrix)) + Gama * Sigma_u_matrix_inverse)).dot(np.dot(G_matrix.T, inv(Sigma_v_matrix)))
+delta_gama_matrix  = inv((G_matrix.T).dot(np.dot(inv(Sigma_v_matrix), G_matrix)) + Gama * Sigma_u_matrix_inverse).dot(np.dot(G_matrix.T, inv(Sigma_v_matrix)))
 
 #plot the deconvolve data and original data
-deconv_ist = delta_gama_matrix.dot(ist_1_0)
+deconv_ist = delta_gama_matrix.dot(ist)
 
 time_range = np.arange(0, row_len*5, 5)
 
 reconv_ist = G_matrix.dot(deconv_ist)
 
 plt.plot(time_range, deconv_ist, label="deconv_ist")
-plt.plot(time_range, bld_1_0, label="bld")
-plt.plot(time_range, ist_1_0, label="ist")
+plt.plot(time_range, bld, label="bld")
+plt.plot(time_range, ist, label="ist")
 plt.plot(time_range, reconv_ist, label="reconv")
 plt.legend()
 plt.show()
@@ -57,7 +71,7 @@ S_matrix_of_gama = np.dot((neghalf_pow_sigV.dot(G_matrix)).dot(inv((G_matrix.T).
 
 QvaL_gama = np.trace(S_matrix_of_gama)
 
-residual_gama = ist_1_0 - reconv_ist
+residual_gama = ist - reconv_ist
 WSSR_gama = np.dot(residual_gama, residual_gama)
 WSSU_gama = np.dot(reconv_ist, Sigma_u_matrix_inverse.dot(reconv_ist))
 

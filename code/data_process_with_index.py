@@ -17,7 +17,7 @@ index_list = cgm_data.index
 index_counter = Counter(index_list)
 cgm_data_grouped = cgm_data.groupby("segmentid")
 
-print(index_counter)
+print(index_counter.len)
 
 
 """

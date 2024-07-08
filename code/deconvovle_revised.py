@@ -20,23 +20,23 @@ from deconvution_method import get_G_matrix, gen_F_matrix
 data = pd.read_csv("../data/measuredvalue_drop_datetime.csv", index_col=("segmentid"))
 data_grouped = data.groupby("segmentid")
 
-selected_data = data_grouped.get_group(240)
+selected_data = data_grouped.get_group(222)
 
 bld = selected_data["blood"]
 ist = selected_data["ist"]
 
 row_len = bld.size
-
-if row_len > 300:
-    bld = selected_data["blood"][0:300]
-    ist = selected_data["ist"][0:300]
-    row_len = 300
+limit_size = 200
+if row_len > limit_size:
+    bld = selected_data["blood"][0:limit_size]
+    ist = selected_data["ist"][0:limit_size]
+    row_len = limit_size
 
 #set the convolve function and related parameters
 Tau = 16
 Cvle_time = 175
 Integrate_step = 5
-Gama = 0.4
+Gama = 0.08
 
 G_matrix = get_G_matrix(Tau, row_len)
 #Assume Sigma_v_matrix = I

@@ -21,7 +21,7 @@ Comment: np.sum(G_matrix[3]) ~= 0.713 << 0.85, and np.sum(G_matrix[3]) ~= 0.79 ~
 therefore adjust the sum of each row to ~0.85 before row 4, to reduce the edge effect in 
 convolution
 """
-def get_G_matrix(Tau, row_len, Cvle_time=175, Inte_scale=5,  fine_tune_scale=0.85, N_fine_tune_term=5):
+def get_convolve_array(Tau, row_len, Cvle_time=175, Inte_scale=5):
     convovle_array = np.zeros(row_len)
     
     Cvle_scale = Cvle_time/Inte_scale
@@ -30,6 +30,11 @@ def get_G_matrix(Tau, row_len, Cvle_time=175, Inte_scale=5,  fine_tune_scale=0.8
         convovle_array[i] = t[0]
 
     convovle_array_flip = np.flip(convovle_array)
+    return convovle_array_flip
+
+def get_G_matrix(Tau, row_len, Cvle_time=175, Inte_scale=5,  fine_tune_scale=0.85, N_fine_tune_term=5):
+
+    convovle_array_flip = get_convolve_array(Tau, row_len, Cvle_time=175, Inte_scale=5)
     
     G_matrix = np.zeros((row_len, row_len))
     

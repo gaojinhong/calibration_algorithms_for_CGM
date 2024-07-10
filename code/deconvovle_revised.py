@@ -20,14 +20,15 @@ from deconvution_method import get_G_matrix, gen_F_matrix
 data = pd.read_csv("../data/measuredvalue_drop_datetime.csv", index_col=("segmentid"))
 data_grouped = data.groupby("segmentid")
 
-selected_data = data_grouped.get_group(222)
+selected_data = data_grouped.get_group(288)
 
 bld = selected_data["blood"]
 ist = selected_data["ist"]
 
 row_len = bld.size
-limit_size = 200
-if row_len > limit_size:
+limit_size = 400
+
+if limit_size:
     bld = selected_data["blood"][0:limit_size]
     ist = selected_data["ist"][0:limit_size]
     row_len = limit_size
